@@ -1,0 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+:root{
+    --primary:#00B894;
+    --secondary:#0984E3;
+    --dark:#111827;
+    --light:#f8fafc;
+    --text:#374151;
+    --shadow:0 15px 40px rgba(0,0,0,.08);
+    --radius:20px;
+}
+
+
+body {
+  background: linear-gradient(to right, var(--light), var(--text));
+  display: flex;
+  justify-content: center;
+}
+
+form {
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--light);
+  padding: 40px;
+  margin-top: 7rem;
+  width: 430px;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+form:hover {
+  transform: scale(1.02);
+}
+
+h1 {
+  text-align: center;
+  font-size: 32px;
+  color: var(--primary-color);
+  margin-bottom: 26px;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: bold;
+}
+
+input,
+input[type="text"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: var(--white);
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 5px rgba(51, 67, 243, 0.4);
+}
+
+#button {
+  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  color: #fff;
+  font-size: 16px;
+  margin-top: 20px;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  /* transition: */
+  transform: 0.2s ease,
+  /* background-color 0.2s ease; */
+}
+
+#button:hover {
+  background-color: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+.link-text {
+  display: flex;
+  flex-direction: row;
+  padding: 12px 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.link-text a {
+  padding-left: 3px;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.link-text a:hover {
+  text-decoration: underline;
+}
+
+span,
+small,
+.error {
+  color: red;
+}
+
+.forgot-link {
+  margin-top: 12px;
+  text-align: right;
+}
+
+.forgot-link a {
+  color: #353a5f;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.forgot-link a:hover {
+  text-decoration: underline;
+}
