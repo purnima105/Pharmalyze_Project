@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             session_unset();
             session_destroy();
 
-            header("Location: login.php?reset=success");
+            header("Location: sign_in.php");
             exit();
         } else {
             $error = "Error updating password. Please try again.";
@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password | Pharmalyze</title>
-    <link rel="stylesheet" href="../auth.css">
+    <link rel="stylesheet" href="../css/auth.css">
 </head>
 
 <body>

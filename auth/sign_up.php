@@ -85,7 +85,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign up | Pharmalyze</title>
-  <link rel="stylesheet" href="../auth.css">
+  <link rel="stylesheet" href="../css/auth.css">
   <style>
     form {
       padding: 30px 40px;
