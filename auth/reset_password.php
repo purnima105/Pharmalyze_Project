@@ -55,13 +55,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <body>
     <form method="POST" class="form">
-        <h2>Reset Password</h2> <?php if (isset($error)) { ?>
-            <div class="error"><?php echo $error; ?></div> <?php } ?>
-        <div class="form-group"> <label for="password">New Password</label> <input type="password" name="password"
-                id="password" required> </div>
-        <div class="form-group"> <label for="confirm_password">Confirm Password</label> <input type="password"
-                name="confirm_password" id="confirm_password" required> </div> <button type="submit">Reset
-            Password</button>
+        <h2>Reset Password</h2> 
+        <?php 
+        if (isset($error)) 
+        { ?>
+        <div class="error"><?php echo $error; ?></div> <?php } ?>
+        <div class="form-group"> <label for="password">New Password</label> 
+        <input type="password" name="password" id="password" required> </div>
+        <div class="form-group"> <label for="confirm_password">Confirm Password</label> 
+        <input type="password" name="confirm_password" id="confirm_password" required> </div> 
+        <input id="button" type="submit" value="Reset Password" />
     </form>
 </body>
 

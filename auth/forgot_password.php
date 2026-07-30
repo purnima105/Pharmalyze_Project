@@ -12,16 +12,19 @@ require 'PHPMailer/src/SMTP.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+    if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Please enter a valid email address.";
+    }
 
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND status = 'active'");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
 
-        $otp = rand(100000, 999999);
-        $_SESSION['reset_otp'] = $otp;
+        $otp = random_int(100000, 999999);
+        $_SESSION['reset_otp'] = password_hash($otp, PASSWORD_DEFAULT);
         $_SESSION['reset_email'] = $email;
         $_SESSION['otp_time'] = time();
 
@@ -58,7 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
     } else {
-        $error = "Email address not found.";
+        $_SESSION['status'] =
+            "If an account with that email exists, an OTP has been sent.";
     }
 
     $stmt->close();
@@ -72,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>forgot password</title>
+    <title>Forgot Password | Pharmalyze</title>
     <link rel="stylesheet" href="../css/auth.css">
 </head>
 
@@ -80,20 +84,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <form class="form" method="POST" action="">
         <h1>Forgot Password</h1>
         <?php
-         if (isset($error)) { 
-        ?>
-        <div class="error">
-            <?php echo $error; ?>
-        </div>
-        <?php 
-        } 
+        if (isset($error)) {
+            ?>
+            <div class="error">
+                <?php echo $error; ?>
+            </div>
+            <?php
+        }
         ?>
         <div class="form-group">
             <label for="email">Email <small>*</small> </label>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" value="<?= htmlspecialchars($email ?? '') ?>">
         </div>
         <div class="link-text">
-            <a href="login.php">Back to Login</a>
+            <a href="sign_in.php">Back to Login</a>
         </div>
         <button id="button" type="submit">Send OTP</button>
     </form>

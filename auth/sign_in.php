@@ -13,7 +13,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   } else {
 
     // include role in query
-    $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE email = ?");
+    $stmt = $conn->prepare("
+SELECT
+    u.id,
+    u.email,
+    u.password,
+    u.status,
+    r.role_name
+FROM users u
+JOIN roles r
+    ON u.role_id = r.id
+WHERE u.email = ?
+");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -25,21 +36,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // store session data
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $email;
-        $_SESSION['user_role'] = $user['role'];
+        $_SESSION['user_role'] = $user['role_name'];
+        
 
         // role-based redirect
-        if ($user['role'] === 'admin') {
+        if ($user['role_name'] === 'Admin') {
           header("Location: ../layouts/admin");
-        } elseif ($user['role'] === 'pharmacist') {
+
+        } 
+        
+        
+        elseif ($user['role_name'] === 'Pharmacist') {
           // Set a success message
           $_SESSION['success'] = "Login successfully!";
           $user_id = $user['id'];
 
           $check = $conn->prepare("
-          SELECT pharmacy_id
+          SELECT id as pharmacy_id
           FROM pharmacies
           WHERE user_id=?
           ");
+          
 
           $check->bind_param("i", $user_id);
           $check->execute();
@@ -47,15 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $result = $check->get_result();
 
           if ($result->num_rows == 0) {
-
             header("Location: ../layouts/pharmacist/add_pharmacy.php");
-
           } else {
-
             header("Location: ../layouts/pharmacist/index.php");
-
           }
-        } elseif ($user['role'] === 'supplier') {
+ }
+
+ 
+         elseif ($user['role_name'] === 'Supplier') {
           // Set a success message
           $_SESSION['success'] = "Login successfully!";
           header("Location: ../layouts/supplier");
@@ -92,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <form method="post" action="">
     <h1>Sign In</h1>
     <label for="email">Email <span>*</span></label>
-    <input type="text" name="email" id="email" />
+    <input type="email" name="email" id="email" />
 
     <label for="password">Password <span>*</span></label>
     <input type="password" name="password" id="password" />

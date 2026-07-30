@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 require_once '../config/conn.php';
 
@@ -19,8 +19,8 @@ if (isset($_SESSION['status'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $entered_otp = $_POST['otp'];
-    $stored_otp  = $_SESSION['reset_otp'];
-    $otp_time    = $_SESSION['otp_time'];
+    $stored_otp = $_SESSION['reset_otp'];
+    $otp_time = $_SESSION['otp_time'];
 
     // check OTP expiry (10 minutes)
     if (time() - $otp_time > 600) {
@@ -28,13 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['reset_otp'], $_SESSION['otp_time']);
     }
     // verify OTP
-    else if ($entered_otp == $stored_otp) {
+    else if (password_verify($entered_otp, $stored_otp)) {
 
-        $_SESSION['otp_verified'] = true; 
+        $_SESSION['otp_verified'] = true;
+
+        // OTP cannot be reused
+        unset($_SESSION['reset_otp']);
+        unset($_SESSION['otp_time']);
+
         header("Location: reset_password.php");
         exit();
-    }
-    else {
+
+    } else {
         $error = "Invalid OTP. Please try again.";
     }
 }
@@ -44,35 +49,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Verify OTP | Pharmalyze</title>
     <link rel="stylesheet" href="../css/auth.css">
 </head>
+
 <body>
     <div class="container">
         <form method="POST" class="form">
-            <h2>verify otp</h2>
+            <h2>Verify OTP</h2>
 
-            <?php if(isset($error)){ ?>
+            <?php if (isset($error)) { ?>
                 <div class="error"> <?php echo $error; ?> </div>
             <?php } ?>
 
-            <?php if(isset($status)){ ?>
+            <?php if (isset($status)) { ?>
                 <div class="success"> <?php echo $status; ?> </div>
             <?php } ?>
 
 
             <div class="form-group">
                 <label for="otp">Enter OTP</label>
-                <input type="number" name="otp" id="otp" required>
+                <input type="text" name="otp" id="otp" maxlength="6" pattern="[0-9]{6}" inputmode="numeric"
+                    autocomplete="one-time-code" required>
             </div>
-            <button type="submit">verify otp</button>
-            <div class="links">
-                <a href="forgot_password.php">request new otp</a>
+            <input id="button" type="submit" value="Verify OTP" />
+            <div class="link-text">
+                <a href="forgot_password.php">Request New OTP</a>
             </div>
         </form>
     </div>
 </body>
+
 </html>

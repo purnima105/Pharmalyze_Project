@@ -1,7 +1,7 @@
 <!-- MAIN -->
 <?php
 // session_start();
-include '../../config/conn.php';   // Database connection
+require_once __DIR__ . '/../../../config/conn.php';   // Database connection
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -11,18 +11,38 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-$sql = "SELECT * FROM users WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
+$sql = "
+SELECT
+    u.id,
+    u.name,
+    u.email,
+    u.phone,
+    u.status,
+    r.role_name
+FROM users u
+INNER JOIN roles r
+    ON u.role_id = r.id
+WHERE u.id = ?
+LIMIT 1
+";
 
+$stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 
 $result = mysqli_stmt_get_result($stmt);
 $user = mysqli_fetch_assoc($result);
 
+if (!$user || $user['status'] !== 'active') {
+    session_destroy();
+    header("Location: ../../auth/sign_in.php");
+    exit();
+}
+mysqli_stmt_close($stmt);
+
 // User information
 $name = $user['name'];
-$role = ucfirst($user['role']); // Admin, Pharmacist, Supplier
+$role = $user['role_name']; // Admin, Pharmacist, Supplier
 ?>
 
 <main class="main">
@@ -32,7 +52,7 @@ $role = ucfirst($user['role']); // Admin, Pharmacist, Supplier
 
         <!-- Left Side -->
         <div class="nav-left">
-            <h3>Welcome Back, <?= htmlspecialchars($name) ?></h3>
+            <h3>Welcome, <?= htmlspecialchars($name) ?></h3>
         </div>
 
         <!-- Right Side -->
