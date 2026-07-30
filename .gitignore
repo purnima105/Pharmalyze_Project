@@ -1,3 +1,4 @@
 /vendor/
 .env
 auth/PHPMailer/
+db.sql
