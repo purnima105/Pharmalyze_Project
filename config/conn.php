@@ -9,7 +9,8 @@ $dotenv->load();
 $conn = mysqli_connect(
     $_ENV['DB_HOST'],
     $_ENV['DB_USER'],
-    $_ENV['DB_PASS']
+    $_ENV['DB_PASS'],
+    $_ENV['DB_NAME']
 );
 
 if (!$conn) {
@@ -17,37 +18,14 @@ if (!$conn) {
 }
 
 // Create database if not exists
-$sql = "CREATE DATABASE IF NOT EXISTS {$_ENV['DB_NAME']}";
+// $sql = "CREATE DATABASE IF NOT EXISTS {$_ENV['DB_NAME']}";
 
-if (!mysqli_query($conn, $sql)) {
-    die("Database creation failed: " . mysqli_error($conn));
-}
+// if (!mysqli_query($conn, $sql)) {
+//     die("Database creation failed: " . mysqli_error($conn));
+// }
 
-// Select database
-mysqli_select_db($conn, $_ENV['DB_NAME']);
-
-// Create products table
-$table = "CREATE TABLE IF NOT EXISTS products (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    price INT,
-    quantity INT
-)";
-
-mysqli_query($conn, $table);
-
-// Create users table
-$table1 = "CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    email VARCHAR(100) UNIQUE,
-    password VARCHAR(255),
-    role ENUM ('admin', 'pharmacist', 'supplier'),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)";
-
-mysqli_query($conn, $table1);
-
+// // Select database
+// mysqli_select_db($conn, $_ENV['DB_NAME']);
 
 
 // email configuration

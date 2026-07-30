@@ -1,9 +1,6 @@
 <?php
 session_start();
-require_once '../config/conn.php';
-if (!isset($conn)) {
-    die('$conn is not defined');
-}
+require_once __DIR__ . "/../config/conn.php";
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

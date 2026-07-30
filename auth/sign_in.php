@@ -1,7 +1,6 @@
 <?php
 session_start();
-require_once "../config/conn.php";
-
+require_once __DIR__ . "/../config/conn.php";
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,8 +31,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user['role'] === 'admin') {
           header("Location: ../layouts/admin");
         } elseif ($user['role'] === 'pharmacist') {
-          header("Location: ../layouts/pharmacist");
+          // Set a success message
+          $_SESSION['success'] = "Login successfully!";
+          $user_id = $user['id'];
+
+          $check = $conn->prepare("
+          SELECT pharmacy_id
+          FROM pharmacies
+          WHERE user_id=?
+          ");
+
+          $check->bind_param("i", $user_id);
+          $check->execute();
+
+          $result = $check->get_result();
+
+          if ($result->num_rows == 0) {
+
+            header("Location: ../layouts/pharmacist/add_pharmacy.php");
+
+          } else {
+
+            header("Location: ../layouts/pharmacist/index.php");
+
+          }
         } elseif ($user['role'] === 'supplier') {
+          // Set a success message
+          $_SESSION['success'] = "Login successfully!";
           header("Location: ../layouts/supplier");
         } else {
           $error = "Unauthorized role";

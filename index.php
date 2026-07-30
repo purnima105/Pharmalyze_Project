@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pharmalyze</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 </head>
 
@@ -44,9 +43,9 @@
         </p>
         <a href="auth/sign_up"><button class="btn signup">Get Started</button></a>
       </div>
-      <div class="hero-image">
+      <!-- <div class="hero-image">
         <img src="assets/hero_image.png" width="400" />
-      </div>
+      </div> -->
     </section>
     <section class="stats">
       <div class="stat-box">
@@ -122,18 +121,18 @@
         </p>
       </div> -->
       <div class="feature-box">
-        <i class="fas fa-truck"></i>
+        <!-- <i class="fas fa-truck"></i> -->
         <h2>Direct Supplier Access</h2>
         <p>Order medicines directly from verified suppliers via the e-commerce platform with transparent pricing and
           delivery updates.</p>
       </div>
       <div class="feature-box">
-        <i class="fas fa-chart-line"></i>
+        <!-- <i class="fas fa-chart-line"></i> -->
         <h2>Smart Analytics</h2>
         <p>Generate reports for inventory, sales trends, and procurement to make data-driven decisions.</p>
       </div>
       <div class="feature-box">
-        <i class="fas fa-bolt"></i>
+        <!-- <i class="fas fa-bolt"></i> -->
         <h2>Fast & Efficient</h2>
         <p>Save time with automated stock updates, quick supplier ordering, and easy-to-use interface.</p>
       </div>

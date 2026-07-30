@@ -1,4 +1,30 @@
 <!-- MAIN -->
+<?php
+// session_start();
+include '../../config/conn.php';   // Database connection
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT * FROM users WHERE id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
+
+// User information
+$name = $user['name'];
+$role = ucfirst($user['role']); // Admin, Pharmacist, Supplier
+?>
+
 <main class="main">
 
     <!-- NAVBAR -->
@@ -6,17 +32,11 @@
 
         <!-- Left Side -->
         <div class="nav-left">
-            <h2>Welcome Back {pharma1}</h2>
+            <h3>Welcome Back, <?= htmlspecialchars($name) ?></h3>
         </div>
 
         <!-- Right Side -->
         <div class="nav-right">
-
-            <!-- Search -->
-            <!-- <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search medicines...">
-            </div> -->
 
             <!-- Notifications -->
             <div class="notification-wrapper">
@@ -42,6 +62,8 @@
                         New supplier order delivered
                     </div>
 
+                    <a href="notification.php">View More</a>
+
                 </div>
 
             </div>
@@ -51,11 +73,11 @@
 
                 <div class="profile" id="profileBtn">
 
-                    <img src="https://ui-avatars.com/api/?name=Admin&background=00B894&color=fff">
+                    <img src="https://ui-avatars.com/api/?name=<?= urlencode($name) ?>&background=00B894&color=fff">
 
                     <div>
-                        <h5>Admin</h5>
-                        <small>Pharmacist</small>
+                        <h5><?= htmlspecialchars($name) ?></h5>
+                        <small><?= htmlspecialchars($role) ?></small>
                     </div>
 
                     <i class="fa-solid fa-chevron-down"></i>
@@ -64,22 +86,17 @@
 
                 <div class="profile-popup" id="profilePopup">
 
-                    <a href="#">
+                    <a href="profile.php">
                         <i class="fa-solid fa-user"></i>
                         My Profile
                     </a>
 
-                    <a href="#">
+                    <a href="setting.php">
                         <i class="fa-solid fa-gear"></i>
                         Settings
                     </a>
 
-                    <a href="#">
-                        <i class="fa-solid fa-key"></i>
-                        Change Password
-                    </a>
-
-                    <a href="#" class="logout">
+                    <a href="../../auth/logout.php" class="logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         Logout
                     </a>

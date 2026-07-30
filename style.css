@@ -484,11 +484,20 @@ section > p{
 
     .headline-primary{
         font-size:2.7rem;
+        text-align:center;
     }
 
     #hero-section{
         flex-direction:column;
         text-align:center;
+    }
+
+    nav{
+        justify-content: start;
+    }
+
+    #logo{
+        margin-left: 20px;
     }
 
     .hero-image img{

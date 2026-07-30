@@ -8,38 +8,30 @@
             <span>Pharmalyze</span>
         </div>
 
-        <ul>
+        <a href="dashboard.php" class="active">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
 
-            <li class="active">
-                <i class="fa-solid fa-house"></i>
-                Dashboard
-            </li>
+        <a href="inventory.php">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            Inventory
+        </a>
 
-            <li>
-                <i class="fa-solid fa-pills"></i>
-                Medicines
-            </li>
+        <a href="purchase.php">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            Purchase
+        </a>
 
-            <li>
-                <i class="fa-solid fa-boxes-stacked"></i>
-                Inventory
-            </li>
 
-            <li>
-                <i class="fa-solid fa-truck"></i>
-                
-            </li>
+        <a href="report.php">
+            <i class="fa-solid fa-chart-column"></i>
+            Reports
+        </a>
 
-            <li>
-                <i class="fa-solid fa-chart-column"></i>
-                Reports
-            </li>
-
-            <li>
-                <i class="fa-solid fa-gear"></i>
-                Settings
-            </li>
-
-        </ul>
+        <a href="setting.php">
+            <i class="fa-solid fa-gear"></i>
+            Settings
+        </a>
 
     </aside>
