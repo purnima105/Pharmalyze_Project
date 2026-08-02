@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->send();
 
             $_SESSION['status'] = "An OTP has been sent to your email. Please check your inbox (and spam).";
-            header("Location: verify-otp.php");
+            header("Location: verify-otp");
             exit();
 
         } catch (Exception $e) {
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password | Pharmalyze</title>
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../auth.css">
 </head>
 
 <body>
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="email" id="email" name="email" value="<?= htmlspecialchars($email ?? '') ?>">
         </div>
         <div class="link-text">
-            <a href="sign_in.php">Back to Login</a>
+            <a href="sign_in">Back to Login</a>
         </div>
         <button id="button" type="submit">Send OTP</button>
     </form>

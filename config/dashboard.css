@@ -10,11 +10,11 @@ body{
 }
 
 .dashboard-content{
-
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:25px;
-    padding:30px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap:14px;
+    padding: 8px;
 
 }
 
@@ -22,7 +22,8 @@ body{
 
     background:white;
     border-radius:15px;
-    padding:25px;
+    padding:18px;
+    width: 218px;
     display:flex;
     align-items:center;
     gap:20px;
@@ -42,9 +43,8 @@ body{
 }
 
 .card i{
-
-    width:70px;
-    height:70px;
+    width:50px;
+    height:50px;
     border-radius:50%;
     display:flex;
     justify-content:center;
@@ -58,15 +58,14 @@ body{
 .card h4{
 
     color:#666;
-    font-size:15px;
-    margin-bottom:8px;
+    font-size:12px;
     font-weight:500;
 
 }
 
 .card h2{
 
-    font-size:34px;
+    font-size:28px;
     color:#222;
 
 }

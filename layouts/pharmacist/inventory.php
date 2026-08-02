@@ -1,25 +1,36 @@
 <?php
-$title = "| Inventory";
+$title = "Inventory";
 include 'partials/header.php';
-include '../../config/conn.php';
+require_once __DIR__ .'/../../config/conn.php';
 
 
 $query = "
 SELECT
-    m.medicine_id,
-    m.medicine_name,
-    c.category_name,
-    m.batch_no,
-    m.manufacturer,
-    m.purchase_price,
+    m.id,
+    m.generic_name,
+    m.brand_name,
+    c.name AS category_name,
+    b.batch_number,
+    man.name AS manufacturer_name,
+    m.cost_price,
     m.selling_price,
     m.quantity,
-    m.minimum_stock,
-    m.expiry_date
+    m.min_stock_level,
+    m.expiry_date,
+    m.status
+
 FROM medicines m
+
 LEFT JOIN categories c
-ON m.category_id = c.category_id
-ORDER BY m.medicine_name ASC
+    ON m.category_id = c.id
+
+LEFT JOIN batches b
+    ON m.batch_id = b.id
+
+LEFT JOIN manufacturers man
+    ON m.manufacturer_id = man.id
+
+ORDER BY m.brand_name ASC
 ";
 
 $result = mysqli_query($conn, $query);
@@ -89,33 +100,38 @@ $result = mysqli_query($conn, $query);
 
                 <tr>
 
-                    <td><?= $row['medicine_id']; ?></td>
+                    <td><?= $row['id']; ?></td>
 
-                    <td><?= $row['medicine_name']; ?></td>
+                    <td>
+                        <strong><?= htmlspecialchars($row['brand_name']); ?></strong><br>
+                        <small><?= htmlspecialchars($row['generic_name']); ?></small>
+                    </td>
 
-                    <td><?= $row['category_name']; ?></td>
+                    <td><?= htmlspecialchars($row['category_name']); ?></td>
 
-                    <td><?= $row['batch_no']; ?></td>
+                    <td><?= htmlspecialchars($row['batch_number']); ?></td>
 
-                    <td><?= $row['manufacturer']; ?></td>
+                    <td><?= htmlspecialchars($row['manufacturer_name']); ?></td>
 
-                    <td>Rs. <?= number_format($row['purchase_price'], 2); ?></td>
+                    <td>Rs. <?= number_format($row['cost_price'], 2); ?></td>
 
                     <td>Rs. <?= number_format($row['selling_price'], 2); ?></td>
 
                     <td><?= $row['quantity']; ?></td>
 
-                    <td><?= date("d M Y", strtotime($row['expiry_date'])); ?></td>
+                    <td>
+                        <?= !empty($row['expiry_date']) ? date("d M Y", strtotime($row['expiry_date'])) : '-'; ?>
+                    </td>
 
                     <td>
 
                         <?php
 
-                        if (strtotime($row['expiry_date']) < time()) {
+                        if (!empty($row['expiry_date']) && strtotime($row['expiry_date']) < time()) {
 
                             echo "<span class='expired'>Expired</span>";
 
-                        } elseif ($row['quantity'] <= $row['minimum_stock']) {
+                        } elseif ($row['quantity'] <= $row['min_stock_level']) {
 
                             echo "<span class='low'>Low Stock</span>";
 
@@ -131,13 +147,11 @@ $result = mysqli_query($conn, $query);
 
                     <td>
 
-                        <a href="edit_medicine.php?id=<?= $row['medicine_id']; ?>" class="edit">
-
+                        <a href="edit_medicine.php?id=<?= $row['id']; ?>" class="edit">
                             <i class="fa-solid fa-pen"></i>
-
                         </a>
 
-                        <a href="delete_medicine.php?id=<?= $row['medicine_id']; ?>" class="delete"
+                        <a href="delete_medicine.php?id=<?= $row['id']; ?>" class="delete"
                             onclick="return confirm('Delete this medicine?')">
 
                             <i class="fa-solid fa-trash"></i>

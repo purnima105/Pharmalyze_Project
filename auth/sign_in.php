@@ -43,8 +43,7 @@ WHERE u.email = ?
         if ($user['role_name'] === 'Admin') {
           header("Location: ../layouts/admin");
 
-        } 
-        
+        }
         
         elseif ($user['role_name'] === 'Pharmacist') {
           // Set a success message
@@ -57,20 +56,17 @@ WHERE u.email = ?
           WHERE user_id=?
           ");
           
-
           $check->bind_param("i", $user_id);
           $check->execute();
 
           $result = $check->get_result();
 
           if ($result->num_rows == 0) {
-            header("Location: ../layouts/pharmacist/add_pharmacy.php");
+            header("Location: ../layouts/pharmacist/add_pharmacy");
           } else {
-            header("Location: ../layouts/pharmacist/index.php");
+            header("Location: ../layouts/pharmacist/dashboard");
           }
  }
-
- 
          elseif ($user['role_name'] === 'Supplier') {
           // Set a success message
           $_SESSION['success'] = "Login successfully!";
@@ -101,7 +97,7 @@ WHERE u.email = ?
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sign In</title>
-  <link rel="stylesheet" href="../css/auth.css">
+  <link rel="stylesheet" href="../auth.css">
 </head>
 
 <body>

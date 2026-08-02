@@ -4,7 +4,7 @@ require_once '../config/conn.php';
 
 // check if otp and email are set in session
 if (!isset($_SESSION['reset_otp']) || !isset($_SESSION['reset_email'])) {
-    header("Location: forgot_password.php");
+    header("Location: forgot_password");
     exit();
 }
 
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         unset($_SESSION['reset_otp']);
         unset($_SESSION['otp_time']);
 
-        header("Location: reset_password.php");
+        header("Location: reset_password");
         exit();
 
     } else {
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP | Pharmalyze</title>
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../auth.css">
 </head>
 
 <body>
@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <input id="button" type="submit" value="Verify OTP" />
             <div class="link-text">
-                <a href="forgot_password.php">Request New OTP</a>
+                <a href="forgot_password">Request New OTP</a>
             </div>
         </form>
     </div>

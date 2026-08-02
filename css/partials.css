@@ -30,7 +30,7 @@ body{
     width:270px;
     background:white;
     box-shadow:var(--shadow);
-    padding:25px;
+    padding:6px;
     position:sticky;
     top:0;
     height:100vh;
@@ -40,6 +40,7 @@ body{
     font-size:1.5rem;
     font-weight:800;
     color:var(--primary);
+    margin: 10px;
     margin-bottom:40px;
 }
 

@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . "/../../config/conn.php";
 
 // Allow only pharmacists
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != "pharmacist") {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != "Pharmacist") {
     header("Location: ../../auth/sign_in.php");
     exit();
 }
@@ -14,52 +14,53 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $user_id = $_SESSION['user_id'];
-    $pharmacy_name = trim($_POST['pharmacy_name']);
-    $registration_number = trim($_POST['registration_number']);
-    $pan_vat = trim($_POST['pan_vat']);
+
+    $name = trim($_POST['pharmacy_name']);
+    $registration_no = trim($_POST['registration_number']);
+    $pan_no = trim($_POST['pan_vat']);
     $phone = trim($_POST['phone']);
     $email = trim($_POST['email']);
     $province = trim($_POST['province']);
     $district = trim($_POST['district']);
     $municipality = trim($_POST['municipality']);
-    $ward = trim($_POST['ward']);
-    $address = trim($_POST['address']);
-    $owner_name = trim($_POST['owner_name']);
+    $ward = (int)$_POST['ward'];
+    $street = trim($_POST['address']);
+    $created_by = $user_id;
 
     $stmt = $conn->prepare("
         INSERT INTO pharmacies
         (
-            user_id,
-            pharmacy_name,
-            registration_number,
-            pan_vat,
-            phone,
+            name,
+            registration_no,
             email,
+            phone,
+            pan_no,
             province,
             district,
             municipality,
             ward,
-            address,
-            owner_name
+            street,
+            created_by,
+            user_id
         )
         VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->bind_param(
-        "isssssssssss",
-        $user_id,
-        $pharmacy_name,
-        $registration_number,
-        $pan_vat,
-        $phone,
+        "ssssssssssii",
+        $name,
+        $registration_no,
         $email,
+        $phone,
+        $pan_no,
         $province,
         $district,
         $municipality,
         $ward,
-        $address,
-        $owner_name
+        $street,
+        $created_by,
+        $user_id
     );
 
     if ($stmt->execute()) {
@@ -303,7 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <button type="submit">
-                Save Pharmacy
+                Add Pharmacy
             </button>
 
         </form>
