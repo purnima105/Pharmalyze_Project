@@ -1,19 +1,133 @@
 <?php
 $title = "Add Medicine";
-// include 'partials/header.php';
 require_once __DIR__ . "/../../config/conn.php";
 
-// Fetch Categories
+$message = "";
+$error = "";
+
+
+// Fetch Categories 
 $categories = $conn->query("SELECT id, name FROM categories WHERE status='active' ORDER BY name");
-
-// Fetch Dosage Forms
+// Fetch Dosage Forms 
 $dosageForms = $conn->query("SELECT id, name FROM dosage_forms WHERE status='active' ORDER BY name");
-
-// Fetch Manufacturers
+// Fetch Manufacturers 
 $manufacturers = $conn->query("SELECT id, name FROM manufacturers WHERE status='active' ORDER BY name");
-
-// Fetch Batches
+// Fetch Batches 
 $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='active' ORDER BY batch_number");
+
+// Function to keep old values
+function old($key, $default = "")
+{
+    return htmlspecialchars($_POST[$key] ?? $default);
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $generic_name = trim($_POST['generic_name']);
+    $brand_name = trim($_POST['brand_name']);
+    $category_id = $_POST['category_id'];
+    $dosage_form_id = $_POST['dosage_form_id'];
+    $manufacturer_id = $_POST['manufacturer_id'];
+    $batch_id = !empty($_POST['batch_id']) ? $_POST['batch_id'] : null;
+    $status = $_POST['status'];
+    $description = trim($_POST['description']);
+    $strength = trim($_POST['strength']);
+
+    $pack_size = ($_POST['pack_size_per_strip'] === "")
+        ? null
+        : $_POST['pack_size_per_strip'];
+
+    $unit = $_POST['unit'];
+    $quantity = $_POST['quantity'];
+    $min_stock = $_POST['min_stock_level'];
+
+    $mfg_date = !empty($_POST['mfg_date']) ? $_POST['mfg_date'] : null;
+    $expiry_date = !empty($_POST['expiry_date']) ? $_POST['expiry_date'] : null;
+
+    $cost_price = $_POST['cost_price'];
+    $selling_price = $_POST['selling_price'];
+
+    // IMAGE
+    $imageName = null;
+
+    if (!empty($_FILES['image']['name'])) {
+
+        $uploadDir = "../../uploads/medicines/";
+
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $imageName = time() . "_" . basename($_FILES["image"]["name"]);
+
+        move_uploaded_file(
+            $_FILES["image"]["tmp_name"],
+            $uploadDir . $imageName
+        );
+    }
+
+    $stmt = $conn->prepare("
+        INSERT INTO medicines
+        (
+            category_id,
+            dosage_form_id,
+            manufacturer_id,
+            batch_id,
+            generic_name,
+            brand_name,
+            description,
+            strength,
+            pack_size_per_strip,
+            unit,
+            image,
+            quantity,
+            min_stock_level,
+            status,
+            mfg_date,
+            expiry_date,
+            cost_price,
+            selling_price
+        )
+        VALUES
+        (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    ");
+
+    $stmt->bind_param(
+        "iiiissssiisiiissdd",
+        $category_id,
+        $dosage_form_id,
+        $manufacturer_id,
+        $batch_id,
+        $generic_name,
+        $brand_name,
+        $description,
+        $strength,
+        $pack_size,
+        $unit,
+        $imageName,
+        $quantity,
+        $min_stock,
+        $status,
+        $mfg_date,
+        $expiry_date,
+        $cost_price,
+        $selling_price
+    );
+
+    if ($stmt->execute()) {
+
+        $message = "Medicine added successfully.";
+
+        // Clear old values after successful insert
+        $_POST = [];
+
+    } else {
+
+        $error = "Failed to add medicine.";
+    }
+
+    $stmt->close();
+}
 ?>
 
 <style>
@@ -132,6 +246,18 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
 
     <h2 class="title">Add Medicine</h2>
 
+    <?php if ($message): ?>
+        <div style="color:green;margin-bottom:20px;">
+            <?= $message ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($error): ?>
+        <div style="color:red;margin-bottom:20px;">
+            <?= $error ?>
+        </div>
+    <?php endif; ?>
+
     <form action="" method="POST" enctype="multipart/form-data">
 
         <div class="grid">
@@ -139,13 +265,13 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
             <!-- Generic Name -->
             <div class="input-group">
                 <label>Generic Name</label>
-                <input type="text" name="generic_name" required>
+                <input type="text" name="generic_name" value="<?= old('generic_name') ?>" required>
             </div>
 
             <!-- Brand Name -->
             <div class="input-group">
                 <label>Brand Name</label>
-                <input type="text" name="brand_name" required>
+                <input type="text" name="brand_name" value="<?= old('brand_name') ?>" required>
             </div>
 
             <!-- Category -->
@@ -157,8 +283,8 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
 
                     <?php while ($row = $categories->fetch_assoc()): ?>
 
-                        <option value="<?= $row['id']; ?>">
-                            <?= htmlspecialchars($row['name']); ?>
+                        <option value="<?= $row['id'] ?>" <?= old('category_id') == $row['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($row['name']) ?>
                         </option>
 
                     <?php endwhile; ?>
@@ -170,14 +296,14 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
             <div class="input-group">
                 <label>Dosage Form</label>
 
-                <select name="dosage_form_id" required>
+                <select name="dosage_form_id" id="dosage_form" required>
 
                     <option value="">Select Dosage Form</option>
 
                     <?php while ($row = $dosageForms->fetch_assoc()): ?>
 
-                        <option value="<?= $row['id']; ?>">
-                            <?= htmlspecialchars($row['name']); ?>
+                        <option value="<?= $row['id'] ?>" <?= old('dosage_form_id') == $row['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($row['name']) ?>
                         </option>
 
                     <?php endwhile; ?>
@@ -187,73 +313,40 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
             </div>
 
             <!-- Manufacturer -->
-            <div class="input-group">
-                <label>Manufacturer</label>
-
-                <select name="manufacturer_id" required>
-
-                    <option value="">Select Manufacturer</option>
-
-                    <?php while ($row = $manufacturers->fetch_assoc()): ?>
-
-                        <option value="<?= $row['id']; ?>">
-                            <?= htmlspecialchars($row['name']); ?>
-                        </option>
-
-                    <?php endwhile; ?>
-
-                </select>
-
+            <div class="input-group"> <label>Manufacturer</label> <input type="text" name="manufacturer_id" required>
             </div>
 
             <!-- Batch -->
-            <div class="input-group">
-                <label>Batch</label>
-
-                <select name="batch_id">
-
-                    <option value="">Select Batch</option>
-
-                    <?php while ($row = $batches->fetch_assoc()): ?>
-
-                        <option value="<?= $row['id']; ?>">
-                            <?= htmlspecialchars($row['batch_number']); ?>
-                        </option>
-
-                    <?php endwhile; ?>
-
-                </select>
-
-            </div>
+            <div class="input-group"> <label>Batch</label> <input type="text" name="batch_id" required> </div>
 
             <!-- Strength -->
             <div class="input-group">
                 <label>Strength</label>
-                <input type="text" name="strength" placeholder="500 mg">
+                <input type="text" name="strength" value="<?= old('strength') ?>" placeholder="500 mg">
             </div>
 
             <!-- Pack Size -->
             <div class="input-group">
                 <label>Pack Size Per Strip</label>
-                <input type="number" name="pack_size_per_strip" min="1">
+                <input type="number" name="pack_size_per_strip" min="1" value="<?= old('pack_size_per_strip') ?>">
             </div>
 
             <!-- Unit -->
             <div class="input-group">
                 <label>Unit</label>
-                <input type="number" name="unit" required>
+                <input type="number" name="unit" value="<?= old('unit') ?>" required>
             </div>
 
             <!-- Quantity -->
             <div class="input-group">
                 <label>Quantity</label>
-                <input type="number" name="quantity" value="0">
+                <input type="number" name="quantity" value="<?= old('quantity', 0) ?>">
             </div>
 
             <!-- Minimum Stock -->
             <div class="input-group">
                 <label>Minimum Stock Level</label>
-                <input type="number" name="min_stock_level" value="10">
+                <input type="number" name="min_stock_level" value="<?= old('min_stock_level', 10) ?>">
             </div>
 
             <!-- Status -->
@@ -262,8 +355,13 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
 
                 <select name="status">
 
-                    <option value="in stock">In Stock</option>
-                    <option value="out of stock">Out Of Stock</option>
+                    <option value="in stock" <?= old('status', 'in stock') == 'in stock' ? 'selected' : '' ?>>
+                        In Stock
+                    </option>
+
+                    <option value="out of stock" <?= old('status') == 'out of stock' ? 'selected' : '' ?>>
+                        Out Of Stock
+                    </option>
 
                 </select>
 
@@ -272,25 +370,25 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
             <!-- Manufacturing Date -->
             <div class="input-group">
                 <label>Manufacturing Date</label>
-                <input type="date" name="mfg_date">
+                <input type="date" name="mfg_date" value="<?= old('mfg_date') ?>">
             </div>
 
             <!-- Expiry Date -->
             <div class="input-group">
                 <label>Expiry Date</label>
-                <input type="date" name="expiry_date">
+                <input type="date" name="expiry_date" value="<?= old('expiry_date') ?>">
             </div>
 
             <!-- Cost Price -->
             <div class="input-group">
                 <label>Cost Price</label>
-                <input type="number" step="0.01" name="cost_price" required>
+                <input type="number" step="0.01" name="cost_price" value="<?= old('cost_price') ?>" required>
             </div>
 
             <!-- Selling Price -->
             <div class="input-group">
                 <label>Selling Price</label>
-                <input type="number" step="0.01" name="selling_price" required>
+                <input type="number" step="0.01" name="selling_price" value="<?= old('selling_price') ?>" required>
             </div>
 
             <!-- Image -->
@@ -302,7 +400,7 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
             <!-- Description -->
             <div class="input-group full">
                 <label>Description</label>
-                <textarea name="description"></textarea>
+                <textarea name="description"><?= old('description') ?></textarea>
             </div>
 
         </div>
@@ -313,6 +411,5 @@ $batches = $conn->query("SELECT id, batch_number FROM batches WHERE status='acti
 
 </div>
 
-<?php
-// include 'partials/footer.php';
-?>
+
+<!--  include 'partials/footer.php'; -->

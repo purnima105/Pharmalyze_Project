@@ -1,10 +1,11 @@
 <?php
 $title = "Inventory";
 include 'partials/header.php';
-require_once __DIR__ .'/../../config/conn.php';
+require_once __DIR__ . '/../../config/conn.php';
 
+$search = "";
 
-$query = "
+$sql = "
 SELECT
     m.id,
     m.generic_name,
@@ -29,16 +30,47 @@ LEFT JOIN batches b
 
 LEFT JOIN manufacturers man
     ON m.manufacturer_id = man.id
-
-ORDER BY m.brand_name ASC
 ";
 
-$result = mysqli_query($conn, $query);
+if (!empty($_GET['search'])) {
+
+    $search = trim($_GET['search']);
+
+    $sql .= "
+    WHERE
+        m.generic_name LIKE ?
+        OR m.brand_name LIKE ?
+        OR man.name LIKE ?
+        OR b.batch_number LIKE ?
+    ";
+}
+
+$sql .= " ORDER BY m.brand_name ASC";
+
+$stmt = mysqli_prepare($conn, $sql);
+
+if (!empty($search)) {
+
+    $searchTerm = "%{$search}%";
+
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssss",
+        $searchTerm,
+        $searchTerm,
+        $searchTerm,
+        $searchTerm
+    );
+}
+
+mysqli_stmt_execute($stmt);
+
+$result = mysqli_stmt_get_result($stmt);
 
 ?>
 
 <!--inventory css  -->
-<link rel="stylesheet" href="inventory.css">
+<link rel="stylesheet" href="../../config/inventory.css">
 
 <div class="container">
 
@@ -48,11 +80,14 @@ $result = mysqli_query($conn, $query);
 
         <!-- Search  -->
         <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Search medicines...">
+            <form method="GET" action="">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="search" placeholder="Search by generic, brand, manufacturer or batch..."
+                    value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+            </form>
         </div>
 
-        <a href="add_medicine.php" class="btn">
+        <a href="add_medicine" class="btn">
 
             <i class="fa-solid fa-plus"></i>
 
@@ -96,7 +131,8 @@ $result = mysqli_query($conn, $query);
 
         <tbody>
 
-            <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+            <?php if(mysqli_num_rows($result) > 0): ?>
+            <?php while($row = mysqli_fetch_assoc($result)): ?>
 
                 <tr>
 
@@ -162,7 +198,17 @@ $result = mysqli_query($conn, $query);
 
                 </tr>
 
-            <?php } ?>
+            <?php endwhile; ?>
+
+<?php else: ?>
+
+<tr>
+    <td colspan="11" style="text-align:center;padding:25px;">
+        No medicine found.
+    </td>
+</tr>
+
+<?php endif; ?>
 
         </tbody>
 
