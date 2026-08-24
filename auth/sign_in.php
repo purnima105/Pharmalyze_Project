@@ -37,15 +37,13 @@ WHERE u.email = ?
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $email;
         $_SESSION['user_role'] = $user['role_name'];
-        
+
 
         // role-based redirect
         if ($user['role_name'] === 'Admin') {
           header("Location: ../layouts/admin");
 
-        }
-        
-        elseif ($user['role_name'] === 'Pharmacist') {
+        } elseif ($user['role_name'] === 'Pharmacist') {
           // Set a success message
           $_SESSION['success'] = "Login successfully!";
           $user_id = $user['id'];
@@ -55,7 +53,7 @@ WHERE u.email = ?
           FROM pharmacies
           WHERE user_id=?
           ");
-          
+
           $check->bind_param("i", $user_id);
           $check->execute();
 
@@ -66,8 +64,7 @@ WHERE u.email = ?
           } else {
             header("Location: ../layouts/pharmacist/dashboard");
           }
- }
-         elseif ($user['role_name'] === 'Supplier') {
+        } elseif ($user['role_name'] === 'Supplier') {
           // Set a success message
           $_SESSION['success'] = "Login successfully!";
           header("Location: ../layouts/supplier");
@@ -96,7 +93,9 @@ WHERE u.email = ?
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign In</title>
+  <title>Sign In | Pharmalyze</title>
+  <link rel="icon" type="image/png" href="../assets/logo.png">
+
   <link rel="stylesheet" href="../auth.css">
 </head>
 

@@ -45,8 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -54,9 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify OTP | Pharmalyze</title>
+      <link rel="icon" type="image/png" href="../assets/logo.png">
     <link rel="stylesheet" href="../auth.css">
 </head>
-
 <body>
     <div class="container">
         <form method="POST" class="form">

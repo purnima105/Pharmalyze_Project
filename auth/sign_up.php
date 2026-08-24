@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($_POST["role_id"])) {
         $roleErr = "Please select a role";
     } else {
-        $role_id = (int)$_POST["role_id"];
+        $role_id = (int) $_POST["role_id"];
     }
 
     // Password
@@ -102,44 +102,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sign up | Pharmalyze</title>
-  <link rel="stylesheet" href="../auth.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign up | Pharmalyze</title>
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    <link rel="stylesheet" href="../auth.css">
 </head>
 
 <body>
-  <form action="" method="post">
-    <h1>Sign Up</h1>
+    <form action="" method="post">
+        <h1>Sign Up</h1>
 
-    <?php if (!empty($successMsg)): ?>
-      <p style="
+        <?php if (!empty($successMsg)): ?>
+            <p style="
       color: green;
       text-align: center;
       margin-bottom: 15px;
       font-weight: bold;
   ">
-        <?php echo htmlspecialchars($successMsg); ?>
-      </p>
-    <?php endif; ?>
+                <?php echo htmlspecialchars($successMsg); ?>
+            </p>
+        <?php endif; ?>
 
 
-    <label for="name">Name <span>*</span> </label>
-    <input type="text" id="name" name="name" value="<?= htmlspecialchars($name); ?>"/>
-    <small class="error"><?php echo $nameErr; ?></small>
+        <label for="name">Name <span>*</span> </label>
+        <input type="text" id="name" name="name" value="<?= htmlspecialchars($name); ?>" />
+        <small class="error"><?php echo $nameErr; ?></small>
 
-    <label for="email">Email<span>*</span></label>
-    <input type="text" id="email" name="email"  value="<?= htmlspecialchars($email); ?>" />
-    <small class="error"><?php echo $emailErr; ?></small>
+        <label for="email">Email<span>*</span></label>
+        <input type="text" id="email" name="email" value="<?= htmlspecialchars($email); ?>" />
+        <small class="error"><?php echo $emailErr; ?></small>
 
-    <label for="role_id">Role<span>*</span></label>
+        <label for="role_id">Role<span>*</span></label>
 
-<select name="role_id" id="role_id">
+        <select name="role_id" id="role_id">
 
-    <option value="">-- Select Role --</option>
+            <option value="">-- Select Role --</option>
 
-    <?php
-    $roles = $conn->query("
+            <?php
+            $roles = $conn->query("
         SELECT id, role_name
         FROM roles
         WHERE status='active'
@@ -147,36 +148,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ORDER BY role_name
     ");
 
-    while ($row = $roles->fetch_assoc()) :
-    ?>
+            while ($row = $roles->fetch_assoc()):
+                ?>
 
-        <option
-            value="<?= $row['id']; ?>"
-            <?= ($role_id == $row['id']) ? "selected" : ""; ?>>
-            <?= htmlspecialchars($row['role_name']); ?>
-        </option>
+                <option value="<?= $row['id']; ?>" <?= ($role_id == $row['id']) ? "selected" : ""; ?>>
+                    <?= htmlspecialchars($row['role_name']); ?>
+                </option>
 
-    <?php endwhile; ?>
+            <?php endwhile; ?>
 
-</select>
+        </select>
 
-<small class="error"><?= $roleErr; ?></small>
+        <small class="error"><?= $roleErr; ?></small>
 
 
-    <label for="password">Password<span>*</span></label>
-    <input type="password" id="password" name="password" />
-    <small class="error"><?php echo $passwordErr; ?></small>
+        <label for="password">Password<span>*</span></label>
+        <input type="password" id="password" name="password" />
+        <small class="error"><?php echo $passwordErr; ?></small>
 
-    <label for="cpassword">Confirm Password<span>*</span></label>
-    <input type="password" id="cpassword" name="cpassword" />
-    <small class="error"><?php echo $cpasswordErr; ?></small>
+        <label for="cpassword">Confirm Password<span>*</span></label>
+        <input type="password" id="cpassword" name="cpassword" />
+        <small class="error"><?php echo $cpasswordErr; ?></small>
 
-    <input id="button" type="submit" value="Sign Up">
+        <input id="button" type="submit" value="Sign Up">
 
-    <div class="link-text">
-      Already have an account? <a href="sign_in">Sign in</a>
-    </div>
-  </form>
+        <div class="link-text">
+            Already have an account? <a href="sign_in">Sign in</a>
+        </div>
+    </form>
 </body>
 
 </html>

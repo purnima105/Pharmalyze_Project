@@ -63,7 +63,7 @@
                 </span>
 
                 <span class="nav-text">
-                    Purchase
+                    Orders
                 </span>
 
             </a>

@@ -1,0 +1,616 @@
+/* =========================================================
+   PHARMALYZE — INVENTORY
+   Clean, professional pharmacy management interface
+   ========================================================= */
+
+:root {
+    --primary: #00a884;
+    --primary-dark: #008f70;
+    --primary-soft: #e9f8f4;
+
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+
+    --warning: #d97706;
+    --warning-soft: #fff7ed;
+
+    --success: #16803c;
+    --success-soft: #ecfdf3;
+
+    --text: #17202a;
+    --text-light: #64748b;
+    --border: #e5e7eb;
+
+    --background: #f6f8fa;
+    --white: #ffffff;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.container {
+    margin-left: 245px;
+    /* padding: 32px 34px 40px; */
+    min-height: 100vh;
+    background: var(--background);
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TOP SECTION
+   ========================================================= */
+
+.top {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.top h2 {
+    margin: 0;
+    margin-right: auto;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.search-box {
+    position: relative;
+    width: 320px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.search-box input {
+    width: 100%;
+    height: 42px;
+    padding: 0 15px 0 40px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search-box input::placeholder {
+    color: #9aa5b1;
+}
+
+.search-box input:hover {
+    border-color: #cbd5e1;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+    box-shadow:0 0 0 3px rgba(0, 168, 132, 0.10);
+}
+
+
+/* =========================================================
+   ADD MEDICINE BUTTON
+   ========================================================= */
+
+.btn {
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-radius: 7px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn i {
+    font-size: 12px;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+
+    box-shadow: 0 4px 12px rgba(0, 168, 132, 0.18);
+
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+/*
+   Your HTML currently places <table> directly inside
+   .container. This styling makes the table itself act
+   like a professional card.
+*/
+
+.container > table {
+    width: 100%;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow: var(--shadow-sm);
+
+    table-layout: auto;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
+
+.container > table thead {
+    background: #f8fafb;
+}
+
+.container > table thead th {
+    height: 46px;
+
+    padding: 0 14px;
+
+    border-bottom: 1px solid var(--border);
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-align: left;
+    text-transform: uppercase;
+
+    letter-spacing: 0.45px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.container > table tbody td {
+    height: 62px;
+
+    padding: 10px 14px;
+
+    border-bottom: 1px solid #eef1f3;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+
+    white-space: nowrap;
+}
+
+.container > table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   ROW HOVER
+   ========================================================= */
+
+.container > table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.container > table tbody tr:hover {
+    background: #fafdfc;
+}
+
+
+/* =========================================================
+   MEDICINE NAME
+   ========================================================= */
+
+.container > table tbody td strong {
+    display: inline-block;
+
+    margin-bottom: 4px;
+
+    color: #1e293b;
+
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.container > table tbody td small {
+    display: inline-block;
+
+    max-width: 190px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    color: #7b8794;
+
+    font-size: 11.5px;
+}
+
+
+/* =========================================================
+   ID
+   ========================================================= */
+
+.container > table tbody td:first-child {
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CATEGORY
+   ========================================================= */
+
+.container > table tbody td:nth-child(3) {
+    color: #475569;
+}
+
+
+/* =========================================================
+   BATCH NUMBER
+   ========================================================= */
+
+.container > table tbody td:nth-child(4) {
+    color: #475569;
+
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   MANUFACTURER
+   ========================================================= */
+
+.container > table tbody td:nth-child(5) {
+    color: #475569;
+}
+
+
+/* =========================================================
+   PRICE
+   ========================================================= */
+
+.container > table tbody td:nth-child(6),
+.container > table tbody td:nth-child(7) {
+    color: #334155;
+
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   STOCK
+   ========================================================= */
+
+.container > table tbody td:nth-child(8) {
+    color: #1e293b;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   EXPIRY
+   ========================================================= */
+
+.container > table tbody td:nth-child(9) {
+    color: #475569;
+
+    font-size: 12.5px;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.container > table tbody td:nth-child(10) span {
+    display: inline-flex;
+    align-items: center;
+
+    min-width: 78px;
+    height: 27px;
+
+    padding: 0 9px;
+
+    justify-content: center;
+
+    border-radius: 5px;
+
+    font-size: 11px;
+    font-weight: 650;
+
+    letter-spacing: 0.1px;
+}
+
+
+/* Available */
+
+.available {
+    color: var(--success);
+    background: var(--success-soft);
+
+    border: 1px solid #d1fae5;
+}
+
+
+/* Low Stock */
+
+.low {
+    color: var(--warning);
+    background: var(--warning-soft);
+
+    border: 1px solid #fed7aa;
+}
+
+
+/* Expired / Inactive */
+
+.expired {
+    color: var(--danger);
+    background: var(--danger-soft);
+
+    border: 1px solid #fecaca;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.container > table tbody td:last-child {
+    white-space: nowrap;
+}
+
+.edit,
+.delete {
+    width: 30px;
+    height: 30px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 6px;
+
+    text-decoration: none;
+
+    transition:
+        background 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.edit {
+    margin-right: 5px;
+
+    color: var(--blue);
+    background: var(--blue-soft);
+}
+
+.edit:hover {
+    background: #dbeafe;
+    transform: translateY(-1px);
+}
+
+.delete {
+    color: var(--danger);
+    background: var(--danger-soft);
+}
+
+.delete:hover {
+    background: #fee2e2;
+    transform: translateY(-1px);
+}
+
+.edit i,
+.delete i {
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.container > table tbody tr td[colspan="11"] {
+    height: 150px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLE
+   ========================================================= */
+
+@media (max-width: 1250px) {
+
+    .container {
+        padding: 28px 25px;
+    }
+
+    .top {
+        flex-wrap: wrap;
+    }
+
+    .top h2 {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 260px;
+    }
+
+    .container > table {
+        display: block;
+        overflow-x: auto;
+
+        scrollbar-width: thin;
+    }
+
+    .container > table thead,
+    .container > table tbody,
+    .container > table tr {
+        width: max-content;
+    }
+
+    .container > table {
+        min-width: 1100px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — SIDEBAR / SMALL SCREENS
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .container {
+        margin-left: 0;
+        padding: 22px 18px 30px;
+    }
+
+    .top {
+        gap: 12px;
+    }
+
+    .search-box {
+        width: 100%;
+        flex: 1;
+    }
+
+    .btn {
+        padding: 0 14px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .container {
+        padding: 18px 12px 25px;
+    }
+
+    .top {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .top h2 {
+        font-size: 20px;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .search-box input {
+        height: 40px;
+    }
+
+    .btn {
+        width: 100%;
+        height: 40px;
+    }
+
+    .container > table {
+        min-width: 1050px;
+    }
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.container > table::-webkit-scrollbar {
+    height: 7px;
+}
+
+.container > table::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.container > table::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.container > table::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

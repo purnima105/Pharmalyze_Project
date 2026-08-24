@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-include '../../config/db.php';
+require_once __DIR__ . "/../../config/conn.php";
 
 $id = $_POST['id'];
 $email = $_POST['email'];

@@ -16,4 +16,4 @@
     include 'partials/sidebar.php';
     include 'partials/topbar.php';
     ?>
-    <main style="padding:1.5rem !important;">
+    <main style="padding:1.5rem !important;"></main>

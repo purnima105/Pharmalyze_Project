@@ -11,21 +11,16 @@
             flex-direction: column;
         }
 
-        /* h1 {
-            margin-top: 5rem;
-            margin-bottom: 0;
-        } */
-
         p {
-            margin: 0;
+            margin: -55px;
             font-size: large;
+            color: #595959;
         }
     </style>
 </head>
 
 <body>
-    <!-- <h1>404 - Page Not Found</h1> -->
-    <img src="/pharmalyze/assets/404error.gif" alt="404 Error" width="400" height="400">
+    <img src="/pharmalyze/assets/404_error.jpg" alt="404 Error" width="500" height="400">
     <p>The page you are looking for does not exist.</p>
 </body>
 
