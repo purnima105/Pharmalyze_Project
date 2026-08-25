@@ -5,7 +5,7 @@ include '../../config/conn.php';
 ?>
 
 <!-- dashboard css -->
-<link rel="stylesheet" href="../../config/dashboard.css">
+<link rel="stylesheet" href="../../auth/dashboard.css">
 <div class="main-dashboard">
     <div class="dashboard-content">
 

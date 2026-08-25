@@ -11,7 +11,7 @@
         <div class="sidebar-logo">
 
             <div class="logo-icon">
-                <i class="fa-solid fa-capsules"></i>
+                <img src="../../assets/logo.png" alt="Logo of Pharmalyze" width="50" height="50">
             </div>
 
             <div class="logo-text">
@@ -122,7 +122,7 @@
 
 
             <!-- LOGOUT -->
-            <a href="logout" class="sidebar-link logout-link">
+            <a href="../../auth/logout" class="sidebar-link logout-link">
 
                 <span class="nav-icon">
                     <i class="fa-solid fa-right-from-bracket"></i>
