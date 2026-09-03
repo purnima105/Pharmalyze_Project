@@ -976,7 +976,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <?php endwhile; ?>
                     </select>
 
-                    <a href="add_maufactuere.php" class="add-manufacturer" title="Add Manufacturer"
+                    <a href="add_manufacture.php" class="add-manufacturer" title="Add Manufacturer"
                         aria-label="Add Manufacturer">
                         +
                     </a>
