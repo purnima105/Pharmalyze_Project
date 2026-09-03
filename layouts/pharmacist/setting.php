@@ -90,16 +90,6 @@ include 'partials/header.php';
                 </span>
             </a>
 
-            <!-- <a href="#appearance" class="settings-menu-item">
-                <span class="menu-icon">
-                    <i class="fa-solid fa-palette"></i>
-                </span>
-
-                <span>
-                    <strong>Appearance</strong>
-                    <small>Customize interface</small>
-                </span>
-            </a> -->
 
             <a href="#system" class="settings-menu-item">
                 <span class="menu-icon">
@@ -331,12 +321,7 @@ include 'partials/header.php';
 
             </section>
 
-
-
-            <!-- APPEARANCE -->
-            <!-- <section class="settings-card" id="appearance">
-
-                <div class="card-header">
+            <div class="card-header">
 
                     <div class="card-icon">
                         <i class="fa-solid fa-palette"></i>

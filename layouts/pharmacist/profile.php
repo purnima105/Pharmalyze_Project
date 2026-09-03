@@ -121,7 +121,7 @@ include 'partials/header.php';
                 <?= htmlspecialchars(ucfirst($user['status'] ?? 'Active')) ?>
             </span>
 
-            <a href="update_profile.php" class="edit-profile-btn">
+            <a href="update_profile" class="edit-profile-btn">
                 <i class="fa-solid fa-pen"></i>
                 Update Profile
             </a>

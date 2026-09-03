@@ -1,7 +1,6 @@
 <?php
 
 $title = "Add Medicine";
-
 require_once __DIR__ . "/../../config/conn.php";
 
 $message = "";
@@ -23,6 +22,14 @@ $dosageForms = $conn->query("
     ORDER BY name
 ");
 
+// Fetch Manufacturers
+$manufacturers = $conn->query("
+    SELECT id, name
+    FROM manufacturers
+    WHERE status = 'active'
+    ORDER BY name
+");
+
 //  Keep Old Form Values
 function old($key, $default = "")
 {
@@ -34,15 +41,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Medicine Information
     $generic_name = trim($_POST['generic_name'] ?? '');
     $brand_name = trim($_POST['brand_name'] ?? '');
-
     $category_id = (int) ($_POST['category_id'] ?? 0);
     $dosage_form_id = (int) ($_POST['dosage_form_id'] ?? 0);
-
-    $manufacturer_name = trim($_POST['manufacturer_name'] ?? '');
-
+    $manufacturer_id = (int) ($_POST['manufacturer_id'] ?? 0);
     $description = trim($_POST['description'] ?? '');
     $strength = trim($_POST['strength'] ?? '');
-
     $pack_size = (
         isset($_POST['pack_size_per_strip']) &&
         $_POST['pack_size_per_strip'] !== ''
@@ -68,9 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         : null;
 
     $cost_price = (float) ($_POST['cost_price'] ?? 0);
-
     $selling_price = (float) ($_POST['selling_price'] ?? 0);
-
     $batch_status = $_POST['batch_status'] ?? 'active';
 
     //  Validation
@@ -79,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         empty($brand_name) ||
         $category_id <= 0 ||
         $dosage_form_id <= 0 ||
-        empty($manufacturer_name) ||
+        $manufacturer_id <= 0 ||
         empty($batch_number)
     ) {
 
@@ -141,60 +142,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             try {
                 // Start Transaction
                 $conn->begin_transaction();
-                //  Find Manufacturer
-                $manufacturerStmt = $conn->prepare("
-                    SELECT id
-                    FROM manufacturers
-                    WHERE name = ?
-                    LIMIT 1
-                ");
+                // //  Find Manufacturer
+                // $manufacturerStmt = $conn->prepare("
+                //     SELECT id
+                //     FROM manufacturers
+                //     WHERE name = ?
+                //     LIMIT 1
+                // ");
 
-                $manufacturerStmt->bind_param(
-                    "s",
-                    $manufacturer_name
-                );
+                // $manufacturerStmt->bind_param(
+                //     "s",
+                //     $manufacturer_name
+                // );
+                // $manufacturerStmt->execute();
+                // $manufacturerResult =
+                //     $manufacturerStmt->get_result();
 
-                $manufacturerStmt->execute();
+                // if ($manufacturerResult->num_rows > 0) {
+                //     $manufacturerRow = $manufacturerResult->fetch_assoc();
+                //     $manufacturer_id = (int) $manufacturerRow['id'];
+                // } else {
+                //     //  New manufacturer
+                //     $insertManufacturer = $conn->prepare("
+                //         INSERT INTO manufacturers
+                //         (
+                //             name,
+                //             status
+                //         )
+                //         VALUES
+                //         (?, 'active')
+                //     ");
 
-                $manufacturerResult =
-                    $manufacturerStmt->get_result();
+                //     $insertManufacturer->bind_param("s", $manufacturer_name);
 
+                //     if (!$insertManufacturer->execute()) {
 
-                if ($manufacturerResult->num_rows > 0) {
+                //         throw new Exception(
+                //             "Failed to add manufacturer: " .
+                //             $insertManufacturer->error
+                //         );
+                //     }
 
-                    $manufacturerRow = $manufacturerResult->fetch_assoc();
+                //     $manufacturer_id =
+                //         $conn->insert_id;
 
-                    $manufacturer_id = (int) $manufacturerRow['id'];
+                //     $insertManufacturer->close();
+                // }
 
-                } else {
-                    //  New manufacturer
-                    $insertManufacturer = $conn->prepare("
-                        INSERT INTO manufacturers
-                        (
-                            name,
-                            status
-                        )
-                        VALUES
-                        (?, 'active')
-                    ");
-
-                    $insertManufacturer->bind_param("s", $manufacturer_name);
-
-                    if (!$insertManufacturer->execute()) {
-
-                        throw new Exception(
-                            "Failed to add manufacturer: " .
-                            $insertManufacturer->error
-                        );
-                    }
-
-                    $manufacturer_id =
-                        $conn->insert_id;
-
-                    $insertManufacturer->close();
-                }
-
-                $manufacturerStmt->close();
+                // $manufacturerStmt->close();
 
                 // Check Duplicate Batch
                 $checkBatch = $conn->prepare("
@@ -325,312 +320,312 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 <style>
-   /* =========================================================
+    /* =========================================================
    PHARMALYZE — ADD MEDICINE
    Clean / Professional / Pharmacy Admin UI
    ========================================================= */
 
-:root {
-    --primary: #00a884;
-    --primary-dark: #008f70;
-    --primary-light: #e9f8f4;
+    :root {
+        --primary: #00a884;
+        --primary-dark: #008f70;
+        --primary-light: #e9f8f4;
 
-    --text: #17202a;
-    --text-secondary: #64748b;
-    --muted: #94a3b8;
+        --text: #17202a;
+        --text-secondary: #64748b;
+        --muted: #94a3b8;
 
-    --border: #e2e8f0;
-    --border-hover: #cbd5e1;
+        --border: #e2e8f0;
+        --border-hover: #cbd5e1;
 
-    --background: #f6f8fa;
-    --white: #ffffff;
+        --background: #f6f8fa;
+        --white: #ffffff;
 
-    --success: #16803c;
-    --success-bg: #ecfdf3;
+        --success: #16803c;
+        --success-bg: #ecfdf3;
 
-    --danger: #dc2626;
-    --danger-bg: #fef2f2;
+        --danger: #dc2626;
+        --danger-bg: #fef2f2;
 
-    --shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
-}
+        --shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
 
 
-/* =========================================================
+    /* =========================================================
    GLOBAL
    ========================================================= */
 
-* {
-    box-sizing: border-box;
-}
+    * {
+        box-sizing: border-box;
+    }
 
-body {
-    margin: 0;
-    background: var(--background);
-    color: var(--text);
-    font-family: Arial, Helvetica, sans-serif;
-}
+    body {
+        margin: 0;
+        background: var(--background);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    MAIN CONTAINER
    ========================================================= */
 
-.container {
-    width: calc(100% - 245px);
-    margin-left: 150px;
-    padding: 35px 40px 50px;
-    min-height: 100vh;
-    background: #f6f8fa;
-    box-sizing: border-box;
-}
+    .container {
+        width: calc(100% - 245px);
+        margin-left: 150px;
+        padding: 35px 40px 50px;
+        min-height: 100vh;
+        background: #f6f8fa;
+        box-sizing: border-box;
+    }
 
 
-/* Center the actual form */
+    /* Center the actual form */
 
-.container > form {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 32px 36px 36px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
-    box-sizing: border-box;
-}
+    .container>form {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 32px 36px 36px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+        box-sizing: border-box;
+    }
 
 
-/* Center title with the form */
+    /* Center title with the form */
 
-.container > .title {
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto 24px;
-    text-align: left;
-}
+    .container>.title {
+        width: 100%;
+        max-width: 1000px;
+        margin: 0 auto 24px;
+        text-align: left;
+    }
 
-/* =========================================================
+    /* =========================================================
    PAGE TITLE
    ========================================================= */
 
-.title {
-    margin: 0 0 28px;
-    padding-bottom: 18px;
-    text-align: left;
-    color: var(--text);
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    border-bottom: 1px solid var(--border);
-}
+    .title {
+        margin: 0 0 28px;
+        padding-bottom: 18px;
+        text-align: left;
+        color: var(--text);
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+        border-bottom: 1px solid var(--border);
+    }
 
-.title::after {
-    content: "";
-    display: block;
-    width: 38px;
-    height: 3px;
-    margin-top: 12px;
-    background: var(--primary);
-    border-radius: 2px;
-}
+    .title::after {
+        content: "";
+        display: block;
+        width: 38px;
+        height: 3px;
+        margin-top: 12px;
+        background: var(--primary);
+        border-radius: 2px;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    FORM GRID
    ========================================================= */
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 22px;
-    row-gap: 19px;
-}
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 22px;
+        row-gap: 19px;
+    }
 
-/* =========================================================
+    /* =========================================================
    INPUT GROUP
    ========================================================= */
 
-.input-group {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-}
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
 
-.input-group.full {
-    grid-column: 1 / -1;
-}
+    .input-group.full {
+        grid-column: 1 / -1;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    LABELS
    ========================================================= */
 
-.input-group label {
-    margin-bottom: 7px;
-    color: #374151;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.4;
-}
+    .input-group label {
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
 
-.input-group label::after {
-    content: "";
-}
+    .input-group label::after {
+        content: "";
+    }
 
 
-/* =========================================================
+    /* =========================================================
    INPUTS / SELECT / TEXTAREA
    ========================================================= */
 
-.input-group input,
-.input-group select,
-.input-group textarea {
-    width: 100%;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    background: #ffffff;
-    color: #1f2937;
-    font-family: inherit;
-    font-size: 13px;
-    outline: none;
-    transition:
-        border-color 0.18s ease,
-        box-shadow 0.18s ease,
-        background 0.18s ease;
-}
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: #ffffff;
+        color: #1f2937;
+        font-family: inherit;
+        font-size: 13px;
+        outline: none;
+        transition:
+            border-color 0.18s ease,
+            box-shadow 0.18s ease,
+            background 0.18s ease;
+    }
 
 
-/* Normal input */
+    /* Normal input */
 
-.input-group input,
-.input-group select {
-    height: 42px;
-    padding: 0 12px;
-}
-
-
-/* Textarea */
-
-.input-group textarea {
-    min-height: 105px;
-    padding: 11px 12px;
-    line-height: 1.55;
-    resize: vertical;
-}
+    .input-group input,
+    .input-group select {
+        height: 42px;
+        padding: 0 12px;
+    }
 
 
-/* =========================================================
+    /* Textarea */
+
+    .input-group textarea {
+        min-height: 105px;
+        padding: 11px 12px;
+        line-height: 1.55;
+        resize: vertical;
+    }
+
+
+    /* =========================================================
    PLACEHOLDER
    ========================================================= */
 
-.input-group input::placeholder,
-.input-group textarea::placeholder {
-    color: #a1aab5;
-}
+    .input-group input::placeholder,
+    .input-group textarea::placeholder {
+        color: #a1aab5;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    HOVER
    ========================================================= */
 
-.input-group input:hover,
-.input-group select:hover,
-.input-group textarea:hover {
-    border-color: var(--border-hover);
-}
+    .input-group input:hover,
+    .input-group select:hover,
+    .input-group textarea:hover {
+        border-color: var(--border-hover);
+    }
 
 
-/* =========================================================
+    /* =========================================================
    FOCUS
    ========================================================= */
 
-.input-group input:focus,
-.input-group select:focus,
-.input-group textarea:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.09);
-    background: #ffffff;
-}
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(0, 168, 132, 0.09);
+        background: #ffffff;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    SELECT
    ========================================================= */
 
-.input-group select {
-    cursor: pointer;
-    appearance: auto;
-}
+    .input-group select {
+        cursor: pointer;
+        appearance: auto;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    DATE INPUT
    ========================================================= */
 
-.input-group input[type="date"] {
-    color: #374151;
-    cursor: pointer;
-}
+    .input-group input[type="date"] {
+        color: #374151;
+        cursor: pointer;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    NUMBER INPUT
    ========================================================= */
 
-.input-group input[type="number"] {
-    appearance: textfield;
-}
+    .input-group input[type="number"] {
+        appearance: textfield;
+    }
 
-.input-group input[type="number"]::-webkit-inner-spin-button,
-.input-group input[type="number"]::-webkit-outer-spin-button {
-    opacity: 0.55;
-}
+    .input-group input[type="number"]::-webkit-inner-spin-button,
+    .input-group input[type="number"]::-webkit-outer-spin-button {
+        opacity: 0.55;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    FILE INPUT
    ========================================================= */
 
-.input-group input[type="file"] {
-    height: 42px;
-    padding: 5px 8px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    background: #fafbfc;
-}
+    .input-group input[type="file"] {
+        height: 42px;
+        padding: 5px 8px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        background: #fafbfc;
+    }
 
-.input-group input[type="file"]::file-selector-button {
-    height: 30px;
-    margin-right: 10px;
-    padding: 0 11px;
-    border: 1px solid #d7dee5;
-    border-radius: 5px;
-    background: #ffffff;
-    color: #475569;
-    font-family: inherit;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.18s ease;
-}
+    .input-group input[type="file"]::file-selector-button {
+        height: 30px;
+        margin-right: 10px;
+        padding: 0 11px;
+        border: 1px solid #d7dee5;
+        border-radius: 5px;
+        background: #ffffff;
+        color: #475569;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.18s ease;
+    }
 
-.input-group input[type="file"]::file-selector-button:hover {
-    background: #f1f5f7;
-    border-color: #cbd5e1;
-}
+    .input-group input[type="file"]::file-selector-button:hover {
+        background: #f1f5f7;
+        border-color: #cbd5e1;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    ALERT / SUCCESS MESSAGE
    Works with your existing PHP messages
    ========================================================= */
 
-.container > form {
-    position: relative;
-}
+    .container>form {
+        position: relative;
+    }
 
 
-/*
+    /*
    If you change the PHP message divs to these classes,
    they will look polished:
 
@@ -638,176 +633,230 @@ body {
    <div class="form-message error">...</div>
 */
 
-.form-message {
-    padding: 11px 13px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-}
+    .form-message {
+        padding: 11px 13px;
+        margin-bottom: 20px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+    }
 
-.form-message.success {
-    color: var(--success);
-    background: var(--success-bg);
-    border: 1px solid #bbf7d0;
-}
+    .form-message.success {
+        color: var(--success);
+        background: var(--success-bg);
+        border: 1px solid #bbf7d0;
+    }
 
-.form-message.error {
-    color: var(--danger);
-    background: var(--danger-bg);
-    border: 1px solid #fecaca;
-}
+    .form-message.error {
+        color: var(--danger);
+        background: var(--danger-bg);
+        border: 1px solid #fecaca;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    SUBMIT BUTTON
    ========================================================= */
 
-.add_medicine {
-    width: 100%;
-    height: 44px;
-    margin-top: 27px;
-    padding: 0 18px;
-    border: 1px solid var(--primary);
-    border-radius: 6px;
-    background: var(--primary);
-    color: #ffffff;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition:
-        background 0.18s ease,
-        border-color 0.18s ease,
-        box-shadow 0.18s ease,
-        transform 0.15s ease;
-}
+    .add_medicine {
+        width: 100%;
+        height: 44px;
+        margin-top: 27px;
+        padding: 0 18px;
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        background: var(--primary);
+        color: #ffffff;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+            background 0.18s ease,
+            border-color 0.18s ease,
+            box-shadow 0.18s ease,
+            transform 0.15s ease;
+    }
 
-.add_medicine:hover {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-    box-shadow: 0 4px 12px rgba(0, 168, 132, 0.16);
-    transform: translateY(-1px);
-}
+    .add_medicine:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        box-shadow: 0 4px 12px rgba(0, 168, 132, 0.16);
+        transform: translateY(-1px);
+    }
 
-.add_medicine:active {
-    transform: translateY(0);
-    box-shadow: none;
-}
+    .add_medicine:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    REQUIRED FIELD INDICATOR
    ========================================================= */
 
-.input-group input:required,
-.input-group select:required {
-    background-color: #fff;
-}
+    .input-group input:required,
+    .input-group select:required {
+        background-color: #fff;
+    }
 
 
-/* =========================================================
+    /* =========================================================
    DISABLED FIELD
    ========================================================= */
 
-.input-group input:disabled,
-.input-group select:disabled {
-    background: #f1f5f7;
+    .input-group input:disabled,
+    .input-group select:disabled {
+        background: #f1f5f7;
 
-    color: #94a3b8;
+        color: #94a3b8;
 
-    border-color: #e5e7eb;
+        border-color: #e5e7eb;
 
-    cursor: not-allowed;
-}
+        cursor: not-allowed;
+    }
 
+    /* manufacturer icon css */
+    /* =========================================================
+   MANUFACTURER SELECT
+   ========================================================= */
 
-/* =========================================================
+    .manufacturer-select {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .manufacturer-select select {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .add-manufacturer {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+
+        background: var(--primary);
+        color: #ffffff;
+
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 1;
+
+        transition:
+            background 0.18s ease,
+            border-color 0.18s ease,
+            transform 0.15s ease,
+            box-shadow 0.18s ease;
+    }
+
+    .add-manufacturer:hover {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        box-shadow: 0 4px 12px rgba(0, 168, 132, 0.16);
+        transform: translateY(-1px);
+    }
+
+    .add-manufacturer:active {
+        transform: translateY(0);
+        box-shadow: none;
+    }
+
+    /* =========================================================
    RESPONSIVE — TABLET
    ========================================================= */
 
-@media (max-width: 1100px) {
+    @media (max-width: 1100px) {
 
-    .container {
-        width: calc(100% - 245px);
+        .container {
+            width: calc(100% - 245px);
 
-        padding: 28px 25px;
+            padding: 28px 25px;
+        }
+
+        .grid {
+            column-gap: 18px;
+        }
     }
 
-    .grid {
-        column-gap: 18px;
-    }
-}
 
-
-/* =========================================================
+    /* =========================================================
    RESPONSIVE — SMALL TABLET
    ========================================================= */
 
-@media (max-width: 850px) {
+    @media (max-width: 850px) {
 
-    .container {
-        width: calc(100% - 245px);
+        .container {
+            width: calc(100% - 245px);
 
-        padding: 25px 20px;
+            padding: 25px 20px;
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .input-group.full {
+            grid-column: auto;
+        }
     }
 
-    .grid {
-        grid-template-columns: 1fr;
-    }
 
-    .input-group.full {
-        grid-column: auto;
-    }
-}
-
-
-/* =========================================================
+    /* =========================================================
    RESPONSIVE — MOBILE
    ========================================================= */
 
-@media (max-width: 650px) {
+    @media (max-width: 650px) {
 
-    .container {
-        width: 100%;
-        margin-left: 0;
-        padding: 22px 15px 30px;
+        .container {
+            width: 100%;
+            margin-left: 0;
+            padding: 22px 15px 30px;
+        }
+
+        .container>form {
+            max-width: none;
+            padding: 25px 20px 30px;
+        }
+
+        .container>.title {
+            max-width: none;
+        }
+
+        .title {
+            font-size: 20px;
+
+            margin-bottom: 23px;
+        }
+
+        .grid {
+            grid-template-columns: 1fr;
+
+            row-gap: 16px;
+        }
+
+        .input-group.full {
+            grid-column: auto;
+        }
+
+        .input-group input,
+        .input-group select {
+            height: 41px;
+        }
+
+        .add_medicine {
+            margin-top: 23px;
+        }
     }
-
-    .container > form {
-        max-width: none;
-        padding: 25px 20px 30px;
-    }
-
-    .container > .title {
-        max-width: none;
-    }
-
-    .title {
-        font-size: 20px;
-
-        margin-bottom: 23px;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-
-        row-gap: 16px;
-    }
-
-    .input-group.full {
-        grid-column: auto;
-    }
-
-    .input-group input,
-    .input-group select {
-        height: 41px;
-    }
-
-    .add_medicine {
-        margin-top: 23px;
-    }
-}
 </style>
 
 
@@ -912,13 +961,26 @@ body {
 
 
             <!-- Manufacturer -->
+            <!-- Manufacturer -->
             <div class="input-group">
-
                 <label>Manufacturer</label>
 
-                <input type="text" name="manufacturer_name" value="<?= old('manufacturer_name') ?>"
-                    placeholder="Enter manufacturer name" required>
+                <div class="manufacturer-select">
+                    <select name="manufacturer_id" required>
+                        <option value="">Select Manufacturer</option>
 
+                        <?php while ($row = $manufacturers->fetch_assoc()): ?>
+                            <option value="<?= $row['id'] ?>" <?= old('manufacturer_id') == $row['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($row['name']) ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+
+                    <a href="add_maufactuere.php" class="add-manufacturer" title="Add Manufacturer"
+                        aria-label="Add Manufacturer">
+                        +
+                    </a>
+                </div>
             </div>
 
 
@@ -973,28 +1035,6 @@ body {
 
             </div>
 
-
-            <!-- Medicine Status -->
-            <div class="input-group">
-
-                <label>Medicine Status</label>
-
-                <select name="medicine_status">
-
-                    <option value="active" <?= old('medicine_status', 'active') == 'active'
-                        ? 'selected'
-                        : '' ?>>
-                        Active
-                    </option>
-                    <option value="inactive" <?= old('medicine_status') == 'inactive'
-                        ? 'selected'
-                        : '' ?>>
-                        Inactive
-                    </option>
-                </select>
-            </div>
-
-
             <!-- Manufacturing Date -->
             <div class="input-group">
                 <label>Manufacturing Date</label>
@@ -1024,27 +1064,6 @@ body {
 
                 <input type="number" step="0.01" min="0" name="selling_price" value="<?= old('selling_price') ?>"
                     required>
-            </div>
-
-            <!-- Batch Status -->
-            <div class="input-group">
-
-                <label>Batch Status</label>
-
-                <select name="batch_status">
-
-                    <option value="active" <?= old('batch_status', 'active') == 'active'
-                        ? 'selected'
-                        : '' ?>>
-                        Active
-                    </option>
-
-                    <option value="inactive" <?= old('batch_status') == 'inactive'
-                        ? 'selected'
-                        : '' ?>>
-                        Inactive
-                    </option>
-                </select>
             </div>
 
             <!-- Medicine Image -->

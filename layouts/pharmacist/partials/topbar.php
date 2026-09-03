@@ -76,7 +76,7 @@ $role = $user['role_name']; // Admin, Pharmacist, Supplier
                         New supplier order delivered
                     </div>
 
-                    <a href="notification.php">View More</a>
+                    <a href="notification">View More</a>
 
                 </div>
 
@@ -100,7 +100,7 @@ $role = $user['role_name']; // Admin, Pharmacist, Supplier
 
                 <div class="profile-popup" id="profilePopup">
 
-                    <a href="profile.php">
+                    <a href="profile">
                         <i class="fa-solid fa-user"></i>
                         My Profile
                     </a>

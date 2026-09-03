@@ -14,12 +14,18 @@ body {
 .main-dashboard {
   margin-left: 240px;
 }
+
+.main-dashboard h2{
+  padding-left: 8px;
+}
+
 .dashboard-content {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   gap: 14px;
   padding: 8px;
+  margin-top: 12px;
 }
 
 .card {
